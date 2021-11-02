@@ -5,7 +5,8 @@ def show(img):
     cv2.imshow('img', img)
     cv2.waitKey(0)
 
-img = cv2.imread('9.png',0)
+path='3yin.png'
+img = cv2.imread(path,0)
 h, w = img.shape
 img = cv2.GaussianBlur(img,(5, 5),0)
 # 5杂线很多，得调滤波器到7（但会滤掉车道线（主要是短线的问题））
@@ -38,7 +39,10 @@ for i in range(len(lines)):
 mean=np.median(allK)
 std=np.std(allK)
 print(mean,std)
+if std<0.1: std=0.1
 
+num=0
+img = cv2.imread(path)
 for i in allPos:
     p1, p2 = i
     x1, y1 = p1
@@ -47,5 +51,8 @@ for i in allPos:
     if k<=mean+std and k>=mean-std:
         print(k)
         cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
+        num+=1
+ret=num/len(allK)
+print('可用率：',ret)
 
 show(img)
