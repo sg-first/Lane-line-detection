@@ -18,6 +18,8 @@ img = cv2.Canny(img,10,200) # min,max
 lines = cv2.HoughLines(img, 1, np.pi / 180, 290) # thr
 
 img = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
+allK=[]
+allPos=[]
 for i in range(len(lines)):
     for rho, theta in lines[i]:
         a = np.cos(theta)
@@ -29,6 +31,21 @@ for i in range(len(lines)):
         x2 = int(x0 - w * (-b))
         y2 = int(y0 - w * (a))
 
+        k=(y1-y2)/(x1-x2)
+        allK.append(k)
+        allPos.append(((x1, y1), (x2, y2)))
+
+mean=np.median(allK)
+std=np.std(allK)
+print(mean,std)
+
+for i in allPos:
+    p1, p2 = i
+    x1, y1 = p1
+    x2, y2 = p2
+    k = (y1 - y2) / (x1 - x2)
+    if k<=mean+std and k>=mean-std:
+        print(k)
         cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
 show(img)
