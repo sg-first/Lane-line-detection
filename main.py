@@ -9,16 +9,14 @@ def doLaneDet(path, times=0):
     img = cv2.imread(path, 0)
     h, w = img.shape
     img = cv2.GaussianBlur(img, (5, 5), 0)
-    # 5杂线很多，得调滤波器到7（但会滤掉车道线（主要是短线的问题））
+    # 5有道上的没检测出来
     # 8短线检测不出来（整体算法的问题，得加东西）
     img = cv2.Canny(img, 10+times*10, 200+times*2)  # min,max
     # 3:200, 300
-    # 4:40, 50（阴影非全，而且现在的结果也有点问题）
-    # show(img)
+    # 4:检测不出来
     # 进行花样滤波？
     lines = cv2.HoughLines(img, 1, np.pi / 180, 290)  # thr
 
-    img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     allK = []
     allPos = []
     for i in range(len(lines)):
@@ -55,10 +53,10 @@ def doLaneDet(path, times=0):
     ret = num / len(allK)
     print('可用率：', ret)
 
-    if ret < 0.6:
+    if ret < 0.8:
         return doLaneDet(path,times+1)
     else:
         show(img)
         return ret
 
-doLaneDet('3yin.png')
+doLaneDet('8.png')
